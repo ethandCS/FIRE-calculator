@@ -7,61 +7,44 @@ CORS(app)  # Enable CORS for all routes
 @app.route('/calculate', methods=['POST'])
 def calculate():
     data = request.json
-    print("Received data:", data)  # Log received data for debugging
-
-    # Extract data from the request
     age = data['age']
-    retirement_age = data['retirementAge']
+    retirementAge = data['retirementAge']
     salary = data['salary']
-    savings_rate = data['savings']
-    investment_rate = data['investments']
+    savingsRate = data['savingsRate']
+    investmentRate = data['investmentRate']
 
-    # Updated growth rates
-    weak_growth_rate = 0.03
-    moderate_growth_rate = 0.06
-    strong_growth_rate = 0.09
+    weak_return = 0.03
+    moderate_return = 0.06
+    strong_return = 0.09
 
-    # Initialize growth lists
-    weak_growth = []
-    moderate_growth = []
-    strong_growth = []
+    years = list(range(1, retirementAge - age + 1))
+    weak = []
+    moderate = []
+    strong = []
 
-    # Initialize current savings and investments for each scenario
-    non_invested_savings = 0
-    current_investment_weak = 0
-    current_investment_moderate = 0
-    current_investment_strong = 0
+    annual_savings = salary * savingsRate
+    annual_investment = annual_savings * investmentRate
+    annual_cash_savings = annual_savings - annual_investment
 
-    # Calculate investment growth for each year until retirement
-    for year in range(retirement_age - age + 1):
-        # Add new savings to non-invested savings
-        annual_savings = salary * savings_rate
-        non_invested_savings += annual_savings * (1 - investment_rate)
+    weak_value = 0
+    moderate_value = 0
+    strong_value = 0
 
-        # Calculate the portion of savings that is invested
-        annual_investment = annual_savings * investment_rate
+    for year in years:
+        weak_value = (weak_value + annual_investment) * (1 + weak_return) + annual_cash_savings
+        moderate_value = (moderate_value + annual_investment) * (1 + moderate_return) + annual_cash_savings
+        strong_value = (strong_value + annual_investment) * (1 + strong_return) + annual_cash_savings
 
-        # Apply investment growth rates and update investments
-        current_investment_weak = (current_investment_weak + annual_investment) * (1 + weak_growth_rate)
-        current_investment_moderate = (current_investment_moderate + annual_investment) * (1 + moderate_growth_rate)
-        current_investment_strong = (current_investment_strong + annual_investment) * (1 + strong_growth_rate)
-
-        # Calculate total value by adding non-invested savings
-        total_weak = current_investment_weak + non_invested_savings
-        total_moderate = current_investment_moderate + non_invested_savings
-        total_strong = current_investment_strong + non_invested_savings
-
-        # Append the current investments to the growth lists
-        weak_growth.append(total_weak)
-        moderate_growth.append(total_moderate)
-        strong_growth.append(total_strong)
+        weak.append(weak_value)
+        moderate.append(moderate_value)
+        strong.append(strong_value)
 
     result = {
-        'weak': weak_growth,
-        'moderate': moderate_growth,
-        'strong': strong_growth
+        'years': [f'Year {year}' for year in years],
+        'weak': weak,
+        'moderate': moderate,
+        'strong': strong,
     }
-    print("Calculated result:", result)  # Log result for debugging
     return jsonify(result)
 
 if __name__ == '__main__':

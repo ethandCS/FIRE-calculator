@@ -1,0 +1,35 @@
+.App {
+  text-align: center;
+}
+
+label {
+  display: block;
+  margin: 10px 0;
+}
+
+input {
+  margin-left: 10px;
+}
+
+button {
+  margin: 20px 0;
+}
+
+.chart-container {
+  width: 80%; /* Adjust the width as needed */
+  max-width: 800px; /* Maximum width of the chart */
+  height: 400px; /* Adjust the height as needed */
+  margin: 0 auto; /* Center the chart */
+}
+
+p {
+  margin-top: 20px;
+  color: grey;
+  font-size: 12px;
+}
+
+footer {
+  margin-top: 20px;
+  color: grey;
+  font-size: 12px;
+}
